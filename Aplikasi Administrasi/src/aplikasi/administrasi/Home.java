@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,12 +25,18 @@ public class Home extends javax.swing.JFrame {
     private Connection konek;
     private Statement stat;
     private ResultSet rs;
+    private ButtonModel rbPria;
+    private ButtonModel rbPerempuan;
     /**
      * Creates new form Home
      */
     public Home() {
         initComponents();
         updateTabel();
+        rbJenisKelaminGroup.add(inputJK1);
+        rbJenisKelaminGroup.add(inputJK2);
+        this.rbPria = inputJK1.getModel();
+        this.rbPerempuan = inputJK2.getModel();
     }
 
     /**
@@ -41,6 +48,7 @@ public class Home extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        rbJenisKelaminGroup = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         labelEmail = new javax.swing.JLabel();
@@ -54,13 +62,14 @@ public class Home extends javax.swing.JFrame {
         inputNamaDepan = new javax.swing.JTextField();
         inputNamaBelakang = new javax.swing.JTextField();
         inputUmur = new javax.swing.JTextField();
-        cbJenisKelamin = new javax.swing.JComboBox<>();
         cbAgama = new javax.swing.JComboBox<>();
         cbStatus = new javax.swing.JComboBox<>();
         btnDataBaru = new javax.swing.JButton();
         btnUpdateData = new javax.swing.JButton();
         btnHapusData = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        inputJK1 = new javax.swing.JRadioButton();
+        inputJK2 = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelData = new javax.swing.JTable();
 
@@ -103,9 +112,6 @@ public class Home extends javax.swing.JFrame {
 
         inputUmur.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        cbJenisKelamin.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        cbJenisKelamin.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Jenis Kelamin", "Laki-Laki", "Perempuan" }));
-
         cbAgama.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         cbAgama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Agama", "Islam", "Hindu", "Budha", "Kristen", "Katolik" }));
 
@@ -140,6 +146,22 @@ public class Home extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("data mahasiswa");
 
+        inputJK1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        inputJK1.setText("Laki-Laki");
+        inputJK1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputJK1ActionPerformed(evt);
+            }
+        });
+
+        inputJK2.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        inputJK2.setText("Perempuan");
+        inputJK2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputJK2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -148,10 +170,6 @@ public class Home extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(labelNamaBelakang)
-                        .addGap(12, 12, 12)
-                        .addComponent(inputNamaBelakang))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(99, 99, 99)
@@ -169,16 +187,24 @@ public class Home extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(inputUmur)
-                            .addComponent(cbJenisKelamin, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cbAgama, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbStatus, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnDataBaru)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnUpdateData)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnHapusData)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(cbStatus, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(inputJK1)
+                                .addGap(18, 18, 18)
+                                .addComponent(inputJK2)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(labelNamaBelakang)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(inputNamaBelakang))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(btnDataBaru)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnUpdateData)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnHapusData))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -187,28 +213,27 @@ public class Home extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(inputEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addComponent(labelNamaDepan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(inputNamaDepan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addComponent(labelNamaBelakang, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(inputNamaBelakang, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(labelUmur, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(inputUmur, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputEmail))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelNamaDepan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputNamaDepan, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelNamaBelakang, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputNamaBelakang, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelUmur, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputUmur, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(labelJenisKelamin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbJenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(inputJK1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inputJK2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbAgama)
@@ -289,7 +314,7 @@ public class Home extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         pack();
@@ -304,7 +329,6 @@ public class Home extends javax.swing.JFrame {
             this.updateTabel();
             konek.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(null,"Proses gagal");
             
         }
@@ -369,7 +393,10 @@ public class Home extends javax.swing.JFrame {
         inputNamaBelakang.setText("");
         inputNamaDepan.setText("");
         inputUmur.setText("");
-        cbJenisKelamin.setSelectedIndex(0);
+        
+        //input jenis kelamin
+        rbJenisKelaminGroup.clearSelection();
+        
         cbAgama.setSelectedIndex(0);
         cbStatus.setSelectedIndex(0);
     }
@@ -395,18 +422,15 @@ public class Home extends javax.swing.JFrame {
         namaDepan = inputNamaDepan.getText();
         namaBelakang = inputNamaBelakang.getText();
         umur = Integer.parseInt(inputUmur.getText());
+        
         //jenis Kelamin
-        switch (cbJenisKelamin.getSelectedIndex()) {
-            case 1:
-                jenisKelamin="Laki-Laki";
-                break;
-            case 2:
-                jenisKelamin="Perempuan";
-                break;
-            default:
-                jenisKelamin="";
-                break;
+        if (rbPria.isSelected()) {
+            jenisKelamin="Laki-Laki";
         }
+        else if (rbPerempuan.isSelected()) {
+            jenisKelamin="perempuan";
+        }
+        
         //agama
         switch (cbAgama.getSelectedIndex()) {
             case 1:
@@ -461,18 +485,13 @@ public class Home extends javax.swing.JFrame {
                 inputNamaBelakang.setText(rs.getString("nama-belakang"));
                 inputUmur.setText(rs.getString("umur"));
                 
-                //set combo box jenis kelamin
+                //set jenis kelamin
                 String jenisKelamin = rs.getString("jenis-kelamin");
-                switch (jenisKelamin) {
-                    case "Laki-Laki":
-                        cbJenisKelamin.setSelectedIndex(1);
-                        break;
-                    case "Perempuan":
-                        cbJenisKelamin.setSelectedIndex(2);
-                        break;
-                    default:
-                        cbJenisKelamin.setSelectedIndex(0);
-                        break;
+                if ("Laki-Laki".equals(jenisKelamin)) {
+                    rbJenisKelaminGroup.setSelected(rbPria, true);
+                }
+                else if ("Perempuan".equals(jenisKelamin)) {
+                    rbJenisKelaminGroup.setSelected(rbPerempuan, true);
                 }
                 
                 //set combo box agama
@@ -525,18 +544,15 @@ public class Home extends javax.swing.JFrame {
         namaDepan = inputNamaDepan.getText();
         namaBelakang = inputNamaBelakang.getText();
         umur = Integer.parseInt(inputUmur.getText());
+        
         //jenis Kelamin
-        switch (cbJenisKelamin.getSelectedIndex()) {
-            case 1:
-                jenisKelamin="Laki-Laki";
-                break;
-            case 2:
-                jenisKelamin="Perempuan";
-                break;
-            default:
-                jenisKelamin="";
-                break;
+        if (rbPria.isSelected()) {
+            jenisKelamin="Laki-Laki";
         }
+        else if (rbPerempuan.isSelected()) {
+            jenisKelamin="perempuan";
+        }
+        
         //agama
         switch (cbAgama.getSelectedIndex()) {
             case 1:
@@ -577,6 +593,14 @@ public class Home extends javax.swing.JFrame {
         //membersihkan panel input data
         this.resetPanelInput();
     }//GEN-LAST:event_btnUpdateDataActionPerformed
+
+    private void inputJK1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputJK1ActionPerformed
+        rbPria = rbJenisKelaminGroup.getSelection();
+    }//GEN-LAST:event_inputJK1ActionPerformed
+
+    private void inputJK2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputJK2ActionPerformed
+        rbPerempuan = rbJenisKelaminGroup.getSelection();
+    }//GEN-LAST:event_inputJK2ActionPerformed
     
     /**
      * @param args the command line arguments
@@ -619,9 +643,10 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton btnHapusData;
     private javax.swing.JButton btnUpdateData;
     private javax.swing.JComboBox<String> cbAgama;
-    private javax.swing.JComboBox<String> cbJenisKelamin;
     private javax.swing.JComboBox<String> cbStatus;
     private javax.swing.JTextField inputEmail;
+    private javax.swing.JRadioButton inputJK1;
+    private javax.swing.JRadioButton inputJK2;
     private javax.swing.JTextField inputNamaBelakang;
     private javax.swing.JTextField inputNamaDepan;
     private javax.swing.JTextField inputUmur;
@@ -636,6 +661,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel labelNamaDepan;
     private javax.swing.JLabel labelStatus;
     private javax.swing.JLabel labelUmur;
+    private javax.swing.ButtonGroup rbJenisKelaminGroup;
     private javax.swing.JTable tabelData;
     // End of variables declaration//GEN-END:variables
 }
