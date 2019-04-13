@@ -5,6 +5,7 @@
  */
 package aplikasi.administrasi;
 
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 //import java.awt.Toolkit;
 
@@ -74,12 +76,13 @@ public class Home extends javax.swing.JFrame {
         tabelData = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ARSIP DATA MAHASISWA");
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1400, 650));
+        setPreferredSize(new java.awt.Dimension(1500, 650));
 
         jLabel1.setFont(new java.awt.Font("Bebas Neue", 0, 48)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("biodata pengguna");
+        jLabel1.setText("data Mahasiswa");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -144,7 +147,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Bebas Neue", 0, 36)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("data mahasiswa");
+        jLabel2.setText("biodata mahasiswa");
 
         inputJK1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         inputJK1.setText("Laki-Laki");
@@ -250,7 +253,9 @@ public class Home extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        tabelData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        tabelData.setFont(new java.awt.Font("Bebas Neue", 0, 24));
+        JTableHeader header = tabelData.getTableHeader();
+        header.setFont(new java.awt.Font("Bebas Neue", 0, 28));
         tabelData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -267,6 +272,11 @@ public class Home extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tabelData.setGridColor(new java.awt.Color(240, 240, 240));
+        tabelData.setOpaque(false);
+        tabelData.setRowMargin(2);
+        tabelData.setSelectionBackground(new java.awt.Color(0, 255, 51));
+        tabelData.setSelectionForeground(new java.awt.Color(0, 0, 0));
         tabelData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelDataMouseClicked(evt);
@@ -302,7 +312,8 @@ public class Home extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 924, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 81, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -310,7 +321,7 @@ public class Home extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
