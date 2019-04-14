@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
@@ -29,6 +31,7 @@ public class Home extends javax.swing.JFrame {
     private ResultSet rs;
     private ButtonModel rbPria;
     private ButtonModel rbPerempuan;
+    
     /**
      * Creates new form Home
      */
@@ -282,8 +285,11 @@ public class Home extends javax.swing.JFrame {
         jLabel3.setBounds(0, 0, 1500, 650);
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    
+    
     private void eksekusiUpdateSQL(String sql){
         try {
             konek = new Koneksi().koneksi();
@@ -298,21 +304,18 @@ public class Home extends javax.swing.JFrame {
         }
     }
     
-    private int eksekusiAmbilSQL(String sql){
-        int data;
+    private void eksekusiAmbilSQL(String sql){
         try {
             konek = new Koneksi().koneksi();
             stat = konek.createStatement();
             rs = stat.executeQuery(sql);
-            data = stat.getUpdateCount();
-            return data;
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return 0;
         }
     }
     
     private void updateTabel(){
+        
         //membersihkan data tabel
         DefaultTableModel model = (DefaultTableModel) tabelData.getModel();
         model.setRowCount(0);
@@ -320,7 +323,8 @@ public class Home extends javax.swing.JFrame {
         //membuat data tabel
         String sql = "SELECT * FROM akun";
         String email, namaLengkap, umur, jenisKelamin, agama, status;
-        int data = this.eksekusiAmbilSQL(sql);
+        this.eksekusiAmbilSQL(sql);
+        
         int id = 0;
         try {
             while(rs.next()){
@@ -363,6 +367,10 @@ public class Home extends javax.swing.JFrame {
         
         cbAgama.setSelectedIndex(0);
         cbStatus.setSelectedIndex(0);
+    }
+    
+    private void progressBar(){
+        
     }
     
     private void btnHapusDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusDataActionPerformed
@@ -442,6 +450,7 @@ public class Home extends javax.swing.JFrame {
         sql = String.format(sql, email);
         this.eksekusiAmbilSQL(sql);
         try {
+            rbJenisKelaminGroup.clearSelection();
             if (rs.next()) {
                 inputEmail.setText(rs.getString("email"));
                 inputEmail.setEditable(false);
@@ -451,10 +460,15 @@ public class Home extends javax.swing.JFrame {
                 
                 //set jenis kelamin
                 String jenisKelamin = rs.getString("jenis-kelamin");
+                System.out.println(jenisKelamin);
                 if ("Laki-Laki".equals(jenisKelamin)) {
+                    System.out.println("laki");
                     rbJenisKelaminGroup.setSelected(rbPria, true);
+                    rbJenisKelaminGroup.setSelected(rbPerempuan, false);
                 }
                 else if ("Perempuan".equals(jenisKelamin)) {
+                    System.out.println("perempuan");
+                    rbJenisKelaminGroup.setSelected(rbPria, false);
                     rbJenisKelaminGroup.setSelected(rbPerempuan, true);
                 }
                 
@@ -568,7 +582,7 @@ public class Home extends javax.swing.JFrame {
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
         resetPanelInput();
-        tabelData.clearSelection();
+        updateTabel();
     }//GEN-LAST:event_jLabel4MouseClicked
     
     /**
