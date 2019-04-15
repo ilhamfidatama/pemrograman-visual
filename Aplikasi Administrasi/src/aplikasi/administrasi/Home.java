@@ -70,7 +70,7 @@ public class Home extends javax.swing.JFrame {
         cbAgama = new javax.swing.JComboBox<>();
         cbStatus = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        refreshData = new javax.swing.JLabel();
         inputJK1 = new javax.swing.JRadioButton();
         inputJK2 = new javax.swing.JRadioButton();
         btnDataBaru = new javax.swing.JButton();
@@ -139,6 +139,11 @@ public class Home extends javax.swing.JFrame {
         jPanel1.add(labelStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 388, 62, 30));
 
         inputEmail.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        inputEmail.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                inputEmailCaretUpdate(evt);
+            }
+        });
         jPanel1.add(inputEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 77, 275, 35));
 
         inputNamaDepan.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -165,13 +170,13 @@ public class Home extends javax.swing.JFrame {
         jLabel2.setText("biodata mahasiswa");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 13, 240, 46));
 
-        jLabel4.setIcon(new javax.swing.ImageIcon("E:\\KULIAH\\SEMESTER 6\\Pemrograman Visual\\pemrograman-visual\\Aplikasi Administrasi\\image\\refresh-35.png")); // NOI18N
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        refreshData.setIcon(new javax.swing.ImageIcon("E:\\KULIAH\\SEMESTER 6\\Pemrograman Visual\\pemrograman-visual\\Aplikasi Administrasi\\image\\refresh-35.png")); // NOI18N
+        refreshData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+                refreshDataMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 5, 35, 35));
+        jPanel1.add(refreshData, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 5, 35, 35));
 
         inputJK1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         inputJK1.setText("Laki-Laki");
@@ -369,8 +374,25 @@ public class Home extends javax.swing.JFrame {
         cbStatus.setSelectedIndex(0);
     }
     
-    private void progressBar(){
-        
+    private void falseEditForm(){
+        inputNamaDepan.setEditable(false);
+        inputNamaBelakang.setEditable(false);
+        inputUmur.setEditable(false);
+        inputJK1.setEnabled(false);
+        inputJK2.setEnabled(false);
+        cbAgama.setEditable(false);
+        cbStatus.setEditable(false);
+    }
+    
+    private void trueEditForm(){
+        inputEmail.setEditable(true);
+        inputNamaDepan.setEditable(true);
+        inputNamaBelakang.setEditable(true);
+        inputUmur.setEditable(true);
+        inputJK1.setEnabled(true);
+        inputJK2.setEnabled(true);
+        cbAgama.setEditable(true);
+        cbStatus.setEditable(true);
     }
     
     private void btnHapusDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusDataActionPerformed
@@ -400,7 +422,7 @@ public class Home extends javax.swing.JFrame {
             jenisKelamin="Laki-Laki";
         }
         else if (rbPerempuan.isSelected()) {
-            jenisKelamin="perempuan";
+            jenisKelamin="Perempuan";
         }
         
         //agama
@@ -452,24 +474,22 @@ public class Home extends javax.swing.JFrame {
         try {
             rbJenisKelaminGroup.clearSelection();
             if (rs.next()) {
-                inputEmail.setText(rs.getString("email"));
                 inputEmail.setEditable(false);
+                inputEmail.setText(rs.getString("email"));
                 inputNamaDepan.setText(rs.getString("nama-depan"));
                 inputNamaBelakang.setText(rs.getString("nama-belakang"));
                 inputUmur.setText(rs.getString("umur"));
                 
                 //set jenis kelamin
                 String jenisKelamin = rs.getString("jenis-kelamin");
-                System.out.println(jenisKelamin);
                 if ("Laki-Laki".equals(jenisKelamin)) {
-                    System.out.println("laki");
                     rbJenisKelaminGroup.setSelected(rbPria, true);
                     rbJenisKelaminGroup.setSelected(rbPerempuan, false);
                 }
                 else if ("Perempuan".equals(jenisKelamin)) {
-                    System.out.println("perempuan");
                     rbJenisKelaminGroup.setSelected(rbPria, false);
                     rbJenisKelaminGroup.setSelected(rbPerempuan, true);
+                    System.out.println(rbPerempuan.isSelected());
                 }
                 
                 //set combo box agama
@@ -528,7 +548,7 @@ public class Home extends javax.swing.JFrame {
             jenisKelamin="Laki-Laki";
         }
         else if (rbPerempuan.isSelected()) {
-            jenisKelamin="perempuan";
+            jenisKelamin="Perempuan";
         }
         
         //agama
@@ -580,10 +600,32 @@ public class Home extends javax.swing.JFrame {
         rbPerempuan = rbJenisKelaminGroup.getSelection();
     }//GEN-LAST:event_inputJK2ActionPerformed
 
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+    private void refreshDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshDataMouseClicked
         resetPanelInput();
         updateTabel();
-    }//GEN-LAST:event_jLabel4MouseClicked
+        trueEditForm();
+    }//GEN-LAST:event_refreshDataMouseClicked
+
+    private void inputEmailCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_inputEmailCaretUpdate
+        if (inputEmail.isEditable()) {
+            String email = inputEmail.getText();
+            String sql = "SELECT * FROM akun WHERE `email`='%s'";
+            sql = String.format(sql, email);
+            System.out.println(sql);
+            eksekusiAmbilSQL(sql);
+        
+            try {
+                if (rs.next()) {
+                    falseEditForm();
+                }else{
+                    trueEditForm();
+                }
+            } catch (SQLException ex) {
+                
+            }
+        }
+        
+    }//GEN-LAST:event_inputEmailCaretUpdate
     
     /**
      * @param args the command line arguments
@@ -636,7 +678,6 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelAgama;
@@ -647,6 +688,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel labelStatus;
     private javax.swing.JLabel labelUmur;
     private javax.swing.ButtonGroup rbJenisKelaminGroup;
+    private javax.swing.JLabel refreshData;
     private javax.swing.JTable tabelData;
     // End of variables declaration//GEN-END:variables
 }
