@@ -489,7 +489,6 @@ public class Home extends javax.swing.JFrame {
                 else if ("Perempuan".equals(jenisKelamin)) {
                     rbJenisKelaminGroup.setSelected(rbPria, false);
                     rbJenisKelaminGroup.setSelected(rbPerempuan, true);
-                    System.out.println(rbPerempuan.isSelected());
                 }
                 
                 //set combo box agama
@@ -611,7 +610,6 @@ public class Home extends javax.swing.JFrame {
             String email = inputEmail.getText();
             String sql = "SELECT * FROM akun WHERE `email`='%s'";
             sql = String.format(sql, email);
-            System.out.println(sql);
             eksekusiAmbilSQL(sql);
         
             try {
