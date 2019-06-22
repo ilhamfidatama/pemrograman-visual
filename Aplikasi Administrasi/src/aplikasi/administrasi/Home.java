@@ -5,7 +5,6 @@
  */
 package aplikasi.administrasi;
 
-import java.awt.Color;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,12 +13,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-
-//import java.awt.Toolkit;
+import Control.Agama;
+import Control.Status;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.util.HashMap;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
+import sun.audio.*;
 
 /**
  *
@@ -35,13 +56,41 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
+    
     public Home() {
         initComponents();
-        updateTabel();
+        updateTabel("");
         rbJenisKelaminGroup.add(inputJK1);
         rbJenisKelaminGroup.add(inputJK2);
         this.rbPria = inputJK1.getModel();
         this.rbPerempuan = inputJK2.getModel();
+        statusBar();
+    }
+    
+    private void statusBar(){
+        //Three panels that are to added to the JFrame
+        JPanel statusBar = new JPanel();
+        JLabel welcomedate;
+ 
+        //Creating the StatusBar.
+        setLayout(new BorderLayout());//frame layout
+        welcomedate = new JLabel();
+        welcomedate.setOpaque(true);//to set the color for jlabel
+        welcomedate.setBackground(Color.black);
+        welcomedate.setForeground(Color.WHITE);
+        statusBar.setLayout(new BorderLayout());
+        statusBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        statusBar.setBackground(Color.LIGHT_GRAY);
+        statusBar.add(welcomedate, BorderLayout.EAST);
+        add("South", statusBar);
+        //display date time to status bar
+        Timer timee = new Timer(1000, (ActionEvent e) -> {
+            java.util.Date now = new java.util.Date();
+            String ss = DateFormat.getDateTimeInstance().format(now);
+            welcomedate.setText(ss);
+            welcomedate.setToolTipText("Welcome, Today is " + ss);
+        });
+        timee.start();
     }
 
     /**
@@ -54,129 +103,99 @@ public class Home extends javax.swing.JFrame {
     private void initComponents() {
 
         rbJenisKelaminGroup = new javax.swing.ButtonGroup();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        formData = new javax.swing.JPanel();
         labelEmail = new javax.swing.JLabel();
         labelNamaDepan = new javax.swing.JLabel();
-        labelNamaBelakang = new javax.swing.JLabel();
-        labelUmur = new javax.swing.JLabel();
         labelJenisKelamin = new javax.swing.JLabel();
         labelAgama = new javax.swing.JLabel();
         labelStatus = new javax.swing.JLabel();
-        inputEmail = new javax.swing.JTextField();
-        inputNamaDepan = new javax.swing.JTextField();
-        inputNamaBelakang = new javax.swing.JTextField();
-        inputUmur = new javax.swing.JTextField();
+        inputNRA = new javax.swing.JTextField();
+        inputNamaLengkap = new javax.swing.JTextField();
         cbAgama = new javax.swing.JComboBox<>();
         cbStatus = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        refreshData = new javax.swing.JLabel();
         inputJK1 = new javax.swing.JRadioButton();
         inputJK2 = new javax.swing.JRadioButton();
         btnDataBaru = new javax.swing.JButton();
         btnHapusData = new javax.swing.JButton();
         btnUpdateData = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        refreshButton = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
         tabelData = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        printKTA = new javax.swing.JButton();
+        nraPrint = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ARSIP DATA MAHASISWA");
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1500, 650));
+        setPreferredSize(new java.awt.Dimension(1155, 625));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
-        jLabel1.setFont(new java.awt.Font("Bebas Neue", 0, 56)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon("E:\\KULIAH\\SEMESTER 6\\Pemrograman Visual\\pemrograman-visual\\Aplikasi Administrasi\\image\\bgHeader.png")); // NOI18N
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(0, 0, 1500, 70);
-
-        jPanel1.setBackground(new java.awt.Color(250, 250, 250));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        formData.setBackground(new java.awt.Color(250, 250, 250));
+        formData.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         labelEmail.setBackground(new java.awt.Color(39, 129, 191));
         labelEmail.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         labelEmail.setForeground(new java.awt.Color(39, 129, 191));
-        labelEmail.setText("Email");
-        jPanel1.add(labelEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 77, 55, 35));
+        labelEmail.setText("NRA");
+        formData.add(labelEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 77, 55, 35));
 
         labelNamaDepan.setBackground(new java.awt.Color(39, 129, 191));
         labelNamaDepan.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         labelNamaDepan.setForeground(new java.awt.Color(39, 129, 191));
-        labelNamaDepan.setText("Nama Depan");
-        jPanel1.add(labelNamaDepan, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 132, -1, 30));
-
-        labelNamaBelakang.setBackground(new java.awt.Color(39, 129, 191));
-        labelNamaBelakang.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        labelNamaBelakang.setForeground(new java.awt.Color(39, 129, 191));
-        labelNamaBelakang.setText("Nama Belakang");
-        jPanel1.add(labelNamaBelakang, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 185, -1, 30));
-
-        labelUmur.setBackground(new java.awt.Color(39, 129, 191));
-        labelUmur.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        labelUmur.setForeground(new java.awt.Color(39, 129, 191));
-        labelUmur.setText("Umur");
-        jPanel1.add(labelUmur, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 238, 55, 30));
+        labelNamaDepan.setText("Nama Lengkap");
+        formData.add(labelNamaDepan, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 132, -1, 30));
 
         labelJenisKelamin.setBackground(new java.awt.Color(39, 129, 191));
         labelJenisKelamin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         labelJenisKelamin.setForeground(new java.awt.Color(39, 129, 191));
         labelJenisKelamin.setText("Jenis Kelamin");
-        jPanel1.add(labelJenisKelamin, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 289, -1, 29));
+        formData.add(labelJenisKelamin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, 29));
 
         labelAgama.setBackground(new java.awt.Color(39, 129, 191));
         labelAgama.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         labelAgama.setForeground(new java.awt.Color(39, 129, 191));
         labelAgama.setText("Agama");
-        jPanel1.add(labelAgama, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 337, -1, 30));
+        formData.add(labelAgama, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, -1, 30));
 
         labelStatus.setBackground(new java.awt.Color(39, 129, 191));
         labelStatus.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         labelStatus.setForeground(new java.awt.Color(39, 129, 191));
         labelStatus.setText("Status");
-        jPanel1.add(labelStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 388, 62, 30));
+        formData.add(labelStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 62, 30));
 
-        inputEmail.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        inputEmail.addCaretListener(new javax.swing.event.CaretListener() {
+        inputNRA.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        inputNRA.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                inputEmailCaretUpdate(evt);
+                inputNRACaretUpdate(evt);
             }
         });
-        jPanel1.add(inputEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 77, 275, 35));
+        formData.add(inputNRA, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 77, 275, 35));
 
-        inputNamaDepan.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jPanel1.add(inputNamaDepan, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 130, 275, 35));
-
-        inputNamaBelakang.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jPanel1.add(inputNamaBelakang, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 183, 275, 35));
-
-        inputUmur.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jPanel1.add(inputUmur, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 236, 275, 35));
+        inputNamaLengkap.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        formData.add(inputNamaLengkap, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 130, 275, 35));
 
         cbAgama.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         cbAgama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Agama", "Islam", "Hindu", "Budha", "Kristen", "Katolik" }));
-        jPanel1.add(cbAgama, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 336, 275, 34));
+        formData.add(cbAgama, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 230, 275, 34));
 
         cbStatus.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Status", "Menikah", "Belum Menikah" }));
-        jPanel1.add(cbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 389, 275, 30));
+        formData.add(cbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 280, 275, 30));
 
         jLabel2.setBackground(new java.awt.Color(39, 129, 191));
         jLabel2.setFont(new java.awt.Font("Bebas Neue", 0, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(39, 129, 191));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("biodata mahasiswa");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 13, 240, 46));
-
-        refreshData.setIcon(new javax.swing.ImageIcon("E:\\KULIAH\\SEMESTER 6\\Pemrograman Visual\\pemrograman-visual\\Aplikasi Administrasi\\image\\refresh-35.png")); // NOI18N
-        refreshData.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                refreshDataMouseClicked(evt);
-            }
-        });
-        jPanel1.add(refreshData, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 5, 35, 35));
+        jLabel2.setText("biodata anggota");
+        formData.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 13, 240, 46));
 
         inputJK1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         inputJK1.setText("Laki-Laki");
@@ -185,7 +204,7 @@ public class Home extends javax.swing.JFrame {
                 inputJK1ActionPerformed(evt);
             }
         });
-        jPanel1.add(inputJK1, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 289, -1, -1));
+        formData.add(inputJK1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, -1, -1));
 
         inputJK2.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         inputJK2.setText("Perempuan");
@@ -194,7 +213,7 @@ public class Home extends javax.swing.JFrame {
                 inputJK2ActionPerformed(evt);
             }
         });
-        jPanel1.add(inputJK2, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 289, -1, -1));
+        formData.add(inputJK2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, -1, -1));
 
         btnDataBaru.setBackground(new java.awt.Color(9, 90, 146));
         btnDataBaru.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -205,7 +224,7 @@ public class Home extends javax.swing.JFrame {
                 btnDataBaruActionPerformed(evt);
             }
         });
-        jPanel1.add(btnDataBaru, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 437, -1, 40));
+        formData.add(btnDataBaru, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 330, -1, 40));
 
         btnHapusData.setBackground(new java.awt.Color(9, 90, 146));
         btnHapusData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -216,7 +235,7 @@ public class Home extends javax.swing.JFrame {
                 btnHapusDataActionPerformed(evt);
             }
         });
-        jPanel1.add(btnHapusData, new org.netbeans.lib.awtextra.AbsoluteConstraints(169, 437, -1, 40));
+        formData.add(btnHapusData, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 330, -1, 40));
 
         btnUpdateData.setBackground(new java.awt.Color(9, 90, 146));
         btnUpdateData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -227,73 +246,107 @@ public class Home extends javax.swing.JFrame {
                 btnUpdateDataActionPerformed(evt);
             }
         });
-        jPanel1.add(btnUpdateData, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 437, -1, 40));
+        formData.add(btnUpdateData, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 330, -1, 40));
 
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(10, 90, 450, 490);
+        refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/refresh-35.png"))); // NOI18N
+        refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshButtonMouseClicked(evt);
+            }
+        });
+        formData.add(refreshButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 10, 35, 35));
 
-        tabelData.setFont(new java.awt.Font("Bebas Neue", 0, 24));
+        getContentPane().add(formData);
+        formData.setBounds(10, 50, 450, 430);
+
+        tabelData.setFont(new java.awt.Font("Bebas Neue", 0, 20));
         JTableHeader header = tabelData.getTableHeader();
-        header.setFont(new java.awt.Font("Bebas Neue", 0, 28));
+        header.setFont(new java.awt.Font("Bebas Neue", 0, 22));
         tabelData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "No", "Email", "Nama Lengkap", "Umur", "Jenis Kelamin", "Agama", "Status"
+                "NRA", "Nama Lengkap"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabelData.setGridColor(new java.awt.Color(240, 240, 240));
-        tabelData.setOpaque(false);
-        tabelData.setRowMargin(2);
-        tabelData.setSelectionBackground(new java.awt.Color(0, 255, 51));
-        tabelData.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        tabelData.setRowHeight(15);
         tabelData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelDataMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tabelData);
+        jScrollPane2.setViewportView(tabelData);
         if (tabelData.getColumnModel().getColumnCount() > 0) {
             tabelData.getColumnModel().getColumn(0).setResizable(false);
             tabelData.getColumnModel().getColumn(1).setResizable(false);
-            tabelData.getColumnModel().getColumn(2).setResizable(false);
-            tabelData.getColumnModel().getColumn(3).setResizable(false);
-            tabelData.getColumnModel().getColumn(4).setResizable(false);
-            tabelData.getColumnModel().getColumn(5).setResizable(false);
-            tabelData.getColumnModel().getColumn(6).setResizable(false);
         }
         tabelData.setAutoResizeMode(tabelData.AUTO_RESIZE_OFF);
-        tabelData.getColumnModel().getColumn(0).setPreferredWidth(43);
-        tabelData.getColumnModel().getColumn(1).setPreferredWidth(250);
-        tabelData.getColumnModel().getColumn(2).setPreferredWidth(225);
-        tabelData.getColumnModel().getColumn(3).setPreferredWidth(75);
-        tabelData.getColumnModel().getColumn(4).setPreferredWidth(140);
-        tabelData.getColumnModel().getColumn(6).setPreferredWidth(135);
+        tabelData.getColumnModel().getColumn(0).setPreferredWidth(100);
+        tabelData.getColumnModel().getColumn(1).setPreferredWidth(257);
         tabelData.setRowHeight(40);
 
-        getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(480, 90, 949, 472);
+        getContentPane().add(jScrollPane2);
+        jScrollPane2.setBounds(480, 50, 360, 430);
 
-        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel3.setIcon(new javax.swing.ImageIcon("E:\\KULIAH\\SEMESTER 6\\Pemrograman Visual\\pemrograman-visual\\Aplikasi Administrasi\\image\\bgAbu.png")); // NOI18N
-        jLabel3.setText("jLabel3");
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(0, 0, 1500, 650);
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Bebas Neue", 0, 30)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(39, 129, 191));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Kartu Tanda Anggota");
+        jLabel1.setPreferredSize(new java.awt.Dimension(40, 15));
+
+        printKTA.setBackground(new java.awt.Color(9, 90, 146));
+        printKTA.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        printKTA.setForeground(new java.awt.Color(255, 255, 255));
+        printKTA.setText("Cetak KTA");
+        printKTA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printKTAActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(nraPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(printKTA)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(printKTA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(nraPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(38, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel1);
+        jPanel1.setBounds(860, 50, 250, 150);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    
-    
     
     private void eksekusiUpdateSQL(String sql){
         try {
@@ -301,7 +354,7 @@ public class Home extends javax.swing.JFrame {
             stat = konek.createStatement();
             stat.executeUpdate(sql);
             JOptionPane.showMessageDialog(null,"Proses berhasil");
-            this.updateTabel();
+            this.updateTabel("");
             konek.close();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null,"Proses gagal");
@@ -319,15 +372,16 @@ public class Home extends javax.swing.JFrame {
         }
     }
     
-    private void updateTabel(){
-        
+    private void updateTabel(String sql){
         //membersihkan data tabel
         DefaultTableModel model = (DefaultTableModel) tabelData.getModel();
         model.setRowCount(0);
         
         //membuat data tabel
-        String sql = "SELECT * FROM akun";
-        String email, namaLengkap, umur, jenisKelamin, agama, status;
+        if (sql.isEmpty()) {
+            sql = "SELECT * FROM akun";
+        }
+        String nra, namaLengkap, jenisKelamin, agama, status;
         this.eksekusiAmbilSQL(sql);
         
         int id = 0;
@@ -337,22 +391,15 @@ public class Home extends javax.swing.JFrame {
                 ((DefaultTableModel) tabelData.getModel()).addRow(rowData);
                 
                 //mengambil data dari database
-                email = rs.getString("email");
-                namaLengkap = rs.getString("nama-depan")+" "+rs.getString("nama-belakang");
-                umur = rs.getString("umur")+" Thn";
+                nra = rs.getString("NRA");
+                namaLengkap = rs.getString("nama-lengkap");
                 jenisKelamin = rs.getString("jenis-kelamin");
                 agama = rs.getString("agama");
                 status = rs.getString("status");
                 
                 //set data pada tabel
-                tabelData.setValueAt(id+1, id, 0);
-                tabelData.setValueAt(email, id, 1);
-                tabelData.setValueAt(namaLengkap, id, 2);
-                tabelData.setValueAt(umur, id, 3);
-                tabelData.setValueAt(jenisKelamin, id, 4);
-                tabelData.setValueAt(agama, id, 5);
-                tabelData.setValueAt(status, id, 6);
-                id++;
+                tabelData.setValueAt(nra, id, 0);
+                tabelData.setValueAt(namaLengkap, id, 1);
             }
             konek.close();
         } catch (SQLException ex) {
@@ -361,11 +408,9 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void resetPanelInput(){
-        inputEmail.setText("");
-        inputEmail.setEditable(true);
-        inputNamaBelakang.setText("");
-        inputNamaDepan.setText("");
-        inputUmur.setText("");
+        inputNRA.setText("");
+        inputNRA.setEditable(true);
+        inputNamaLengkap.setText("");
         
         //input jenis kelamin
         rbJenisKelaminGroup.clearSelection();
@@ -375,9 +420,7 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void falseEditForm(){
-        inputNamaDepan.setEditable(false);
-        inputNamaBelakang.setEditable(false);
-        inputUmur.setEditable(false);
+        inputNamaLengkap.setEditable(false);
         inputJK1.setEnabled(false);
         inputJK2.setEnabled(false);
         cbAgama.setEditable(false);
@@ -385,10 +428,8 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void trueEditForm(){
-        inputEmail.setEditable(true);
-        inputNamaDepan.setEditable(true);
-        inputNamaBelakang.setEditable(true);
-        inputUmur.setEditable(true);
+        inputNRA.setEditable(true);
+        inputNamaLengkap.setEditable(true);
         inputJK1.setEnabled(true);
         inputJK2.setEnabled(true);
         cbAgama.setEditable(true);
@@ -396,9 +437,9 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void btnHapusDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusDataActionPerformed
-        String email = inputEmail.getText();
-        String sql = "DELETE FROM akun WHERE email='%s'";
-        sql = String.format(sql, email);
+        String nra = inputNRA.getText();
+        String sql = "DELETE FROM akun WHERE nra='%s'";
+        sql = String.format(sql, nra);
         
         //proses menghapus data di database
         this.eksekusiUpdateSQL(sql);
@@ -408,16 +449,11 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHapusDataActionPerformed
 
     private void btnDataBaruActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDataBaruActionPerformed
-        String email, namaDepan, namaBelakang, jenisKelamin="", agama="", status="";
-        int umur;
+        String nra, namaLengkap, jenisKelamin="", agama="", status="";
         
-        //mengambil data baru
-        email = inputEmail.getText();
-        namaDepan = inputNamaDepan.getText();
-        namaBelakang = inputNamaBelakang.getText();
-        umur = Integer.parseInt(inputUmur.getText());
+        nra = inputNRA.getText();
+        namaLengkap = inputNamaLengkap.getText();
         
-        //jenis Kelamin
         if (rbPria.isSelected()) {
             jenisKelamin="Laki-Laki";
         }
@@ -425,122 +461,22 @@ public class Home extends javax.swing.JFrame {
             jenisKelamin="Perempuan";
         }
         
-        //agama
-        switch (cbAgama.getSelectedIndex()) {
-            case 1:
-                agama="Islam";
-                break;
-            case 2:
-                agama="Hindu";
-                break;
-            case 3:
-                agama="Budha";
-                break; 
-            case 4:
-                agama="Kristen";
-                break;
-            case 5:
-                agama="Katolik";
-                break;
-            default:
-                break;
-        }
-        //status
-        switch (cbStatus.getSelectedIndex()) {
-            case 1:
-                status="Menikah";
-                break;
-            case 2:
-                status="Belum Menikah";
-                break;
-            default:
-                status="";
-                break;
-        }
-        String sql = "INSERT INTO akun VALUES ('%s', '%s', '%s', %d, '%s', '%s', '%s')";
-        sql = String.format(sql, email, namaDepan, namaBelakang, umur, jenisKelamin, agama, status);
+        agama = Agama.getAgama(cbAgama.getSelectedIndex());
+        
+        status = Status.getStatus(cbStatus.getSelectedIndex());
+                
+        String sql = "INSERT INTO akun VALUES (null,'%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+        sql = String.format(sql, nra, namaLengkap, jenisKelamin, agama, status);
         this.eksekusiUpdateSQL(sql);
         
-        //membersihkan panel input data
         this.resetPanelInput();
     }//GEN-LAST:event_btnDataBaruActionPerformed
 
-    private void tabelDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDataMouseClicked
-        int baris = tabelData.getSelectedRow();
-        String email = tabelData.getModel().getValueAt(baris, 1).toString();
-        String sql = "SELECT * FROM akun WHERE email ='%s'";
-        sql = String.format(sql, email);
-        this.eksekusiAmbilSQL(sql);
-        try {
-            rbJenisKelaminGroup.clearSelection();
-            if (rs.next()) {
-                inputEmail.setEditable(false);
-                inputEmail.setText(rs.getString("email"));
-                inputNamaDepan.setText(rs.getString("nama-depan"));
-                inputNamaBelakang.setText(rs.getString("nama-belakang"));
-                inputUmur.setText(rs.getString("umur"));
-                
-                //set jenis kelamin
-                String jenisKelamin = rs.getString("jenis-kelamin");
-                if ("Laki-Laki".equals(jenisKelamin)) {
-                    rbJenisKelaminGroup.setSelected(rbPria, true);
-                    rbJenisKelaminGroup.setSelected(rbPerempuan, false);
-                }
-                else if ("Perempuan".equals(jenisKelamin)) {
-                    rbJenisKelaminGroup.setSelected(rbPria, false);
-                    rbJenisKelaminGroup.setSelected(rbPerempuan, true);
-                }
-                
-                //set combo box agama
-                String agama = rs.getString("agama");
-                switch (agama) {
-                    case "Islam":
-                        cbAgama.setSelectedIndex(1);
-                        break;
-                    case "Hindu":
-                        cbAgama.setSelectedIndex(2);
-                        break;
-                    case "Budha":
-                        cbAgama.setSelectedIndex(3);
-                        break;
-                    case "Kristen":
-                        cbAgama.setSelectedIndex(4);
-                        break;
-                    case "Katolik":
-                        cbAgama.setSelectedIndex(5);
-                        break;
-                    default:
-                        cbAgama.setSelectedIndex(0);
-                        break;
-                }
-                
-                //set combo box status
-                String status = rs.getString("status");
-                switch (status) {
-                    case "Menikah":
-                        cbStatus.setSelectedIndex(1);
-                        break;
-                    case "Belum Menikah":
-                        cbStatus.setSelectedIndex(2);
-                        break;
-                    default:
-                        cbStatus.setSelectedIndex(0);
-                        break;
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }//GEN-LAST:event_tabelDataMouseClicked
-
     private void btnUpdateDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateDataActionPerformed
-        String email, namaDepan, namaBelakang, jenisKelamin="", agama="", status="";
-        int umur;
+        String nra, namaLengkap="", jenisKelamin="", agama="", status="";
         //mengambil data baru
-        email = inputEmail.getText();
-        namaDepan = inputNamaDepan.getText();
-        namaBelakang = inputNamaBelakang.getText();
-        umur = Integer.parseInt(inputUmur.getText());
+        nra = inputNRA.getText();
+        namaLengkap = inputNamaLengkap.getText();
         
         //jenis Kelamin
         if (rbPria.isSelected()) {
@@ -549,42 +485,13 @@ public class Home extends javax.swing.JFrame {
         else if (rbPerempuan.isSelected()) {
             jenisKelamin="Perempuan";
         }
+
+        agama = Agama.getAgama(cbAgama.getSelectedIndex());
+
+        status = Status.getStatus(cbStatus.getSelectedIndex());
         
-        //agama
-        switch (cbAgama.getSelectedIndex()) {
-            case 1:
-                agama="Islam";
-                break;
-            case 2:
-                agama="Hindu";
-                break;
-            case 3:
-                agama="Budha";
-                break; 
-            case 4:
-                agama="Kristen";
-                break;
-            case 5:
-                agama="Katolik";
-                break;
-            default:
-                agama="";
-                break;
-        }
-        //status
-        switch (cbStatus.getSelectedIndex()) {
-            case 1:
-                status="Menikah";
-                break;
-            case 2:
-                status="Belum Menikah";
-                break;
-            default:
-                status="";
-                break;
-        }
-        String sql = "UPDATE `akun` SET `nama-depan`='%s',`nama-belakang`='%s',`umur`=%d,`jenis-kelamin`='%s',`agama`='%s',`status`='%s' WHERE `email`='%s'";
-        sql = String.format(sql, namaDepan, namaBelakang, umur, jenisKelamin, agama, status, email);
+        String sql = "UPDATE `akun` SET `nama-depan`='%s',`nama-belakang`='%s',`umur`=%d,`jenis-kelamin`='%s',`agama`='%s',`status`='%s' WHERE `nra`='%s'";
+        sql = String.format(sql, namaLengkap, jenisKelamin, agama, status, nra);
         this.eksekusiUpdateSQL(sql);
         
         //membersihkan panel input data
@@ -599,35 +506,98 @@ public class Home extends javax.swing.JFrame {
         rbPerempuan = rbJenisKelaminGroup.getSelection();
     }//GEN-LAST:event_inputJK2ActionPerformed
 
-    private void refreshDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshDataMouseClicked
-        resetPanelInput();
-        updateTabel();
-        trueEditForm();
-    }//GEN-LAST:event_refreshDataMouseClicked
-
-    private void inputEmailCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_inputEmailCaretUpdate
-        if (inputEmail.isEditable()) {
-            String email = inputEmail.getText();
-            String sql = "SELECT * FROM akun WHERE `email`='%s'";
-            sql = String.format(sql, email);
+    private void inputNRACaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_inputNRACaretUpdate
+        if (inputNRA.isEditable()) {
+            String nra = inputNRA.getText();
+            String sql = "SELECT * FROM akun WHERE `nra`='%s'";
+            sql = String.format(sql, nra);
             eksekusiAmbilSQL(sql);
         
             try {
                 if (rs.next()) {
-                    falseEditForm();
-                }else{
                     trueEditForm();
+                }else{
+                    falseEditForm();
                 }
             } catch (SQLException ex) {
                 
             }
+        }    
+    }//GEN-LAST:event_inputNRACaretUpdate
+
+    private void refreshButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshButtonMouseClicked
+        // TODO add your handling code here:
+        resetPanelInput();
+        updateTabel("");
+        trueEditForm();
+    }//GEN-LAST:event_refreshButtonMouseClicked
+
+    private void tabelDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDataMouseClicked
+        int baris = tabelData.getSelectedRow();
+        String nra = tabelData.getModel().getValueAt(baris, 0).toString();
+        updateForm(nra);
+        nraPrint.setText(nra);
+    }//GEN-LAST:event_tabelDataMouseClicked
+
+    private void printKTAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printKTAActionPerformed
+        HashMap hash = new HashMap();
+        Koneksi connect = new Koneksi();
+        JasperDesign jd;
+        JasperReport jr;
+        JasperPrint jp;
+        String nra = nraPrint.getText();
+        try {
+            String sql = "SELECT * FROM akun WHERE nra="+nra;
+            jd = JRXmlLoader.load("./src/Report/kta.jrxml");
+            JRDesignQuery newquery = new JRDesignQuery();
+            newquery.setText(sql);
+            jd.setQuery(newquery);
+            jr = JasperCompileManager.compileReport(jd);
+            jp = JasperFillManager.fillReport(jr, null, connect.conn);
+            JasperViewer.viewReport(jp);
+        } catch (JRException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_printKTAActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        InputStream music;
+        try {
+            music = new FileInputStream(new File("src\\Sounds\\welcome.wav"));
+            AudioStream as = new AudioStream(music);
+            AudioPlayer.player.start(as);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowOpened
+    
+    private void updateForm(String nra){
+        String sql = "SELECT * FROM akun WHERE NRA='"+nra+"'";
+        this.eksekusiAmbilSQL(sql);
+        try {
+            while(rs.next()){
+                inputNRA.setText(rs.getString("NRA"));
+                inputNamaLengkap.setText(rs.getString("nama-lengkap"));
+                String jk = rs.getString("jenis-kelamin");
+                if (jk.equals("Laki-Laki")) {
+                    rbPria.setSelected(true);
+                }else if (jk.equals("Perempuan")) {
+                    rbPerempuan.setSelected(true);
+                }
+                int index = Agama.setAgama(rs.getString("agama"));
+                cbAgama.setSelectedIndex(index);
+                index = Status.setStatus(rs.getString("status"));
+                cbStatus.setSelectedIndex(index);
+            }
+            konek.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }//GEN-LAST:event_inputEmailCaretUpdate
+    }
     
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -667,26 +637,24 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton btnUpdateData;
     private javax.swing.JComboBox<String> cbAgama;
     private javax.swing.JComboBox<String> cbStatus;
-    private javax.swing.JTextField inputEmail;
+    private javax.swing.JPanel formData;
     private javax.swing.JRadioButton inputJK1;
     private javax.swing.JRadioButton inputJK2;
-    private javax.swing.JTextField inputNamaBelakang;
-    private javax.swing.JTextField inputNamaDepan;
-    private javax.swing.JTextField inputUmur;
+    private javax.swing.JTextField inputNRA;
+    private javax.swing.JTextField inputNamaLengkap;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labelAgama;
     private javax.swing.JLabel labelEmail;
     private javax.swing.JLabel labelJenisKelamin;
-    private javax.swing.JLabel labelNamaBelakang;
     private javax.swing.JLabel labelNamaDepan;
     private javax.swing.JLabel labelStatus;
-    private javax.swing.JLabel labelUmur;
+    private javax.swing.JLabel nraPrint;
+    private javax.swing.JButton printKTA;
     private javax.swing.ButtonGroup rbJenisKelaminGroup;
-    private javax.swing.JLabel refreshData;
+    private javax.swing.JLabel refreshButton;
     private javax.swing.JTable tabelData;
     // End of variables declaration//GEN-END:variables
 }
