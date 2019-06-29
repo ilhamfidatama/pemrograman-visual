@@ -39,7 +39,7 @@ public class AplikasiAdministrasi {
         pr.setVisible(true);
         
         aa.eksekusiAmbilSQL("SELECT * FROM akun");
-        int delay = aa.data * 10;
+        int delay = aa.data * 1;
         try {
             for (int i = 0; i <= 100; i++) {
                 Thread.sleep(delay);

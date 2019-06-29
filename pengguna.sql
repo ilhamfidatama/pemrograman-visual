@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 4.6.5.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 12 Apr 2019 pada 14.42
--- Versi server: 10.1.38-MariaDB
--- Versi PHP: 7.3.2
+-- Generation Time: 29 Jun 2019 pada 18.14
+-- Versi Server: 10.1.21-MariaDB
+-- PHP Version: 5.6.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -29,10 +27,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `akun` (
-  `email` varchar(25) NOT NULL,
-  `nama-depan` varchar(10) NOT NULL,
-  `nama-belakang` varchar(10) NOT NULL,
-  `umur` int(11) NOT NULL,
+  `NRA` varchar(12) NOT NULL,
+  `nama-lengkap` varchar(40) NOT NULL,
   `jenis-kelamin` varchar(9) NOT NULL DEFAULT '',
   `agama` varchar(10) NOT NULL,
   `status` varchar(14) NOT NULL
@@ -42,21 +38,18 @@ CREATE TABLE `akun` (
 -- Dumping data untuk tabel `akun`
 --
 
-INSERT INTO `akun` (`email`, `nama-depan`, `nama-belakang`, `umur`, `jenis-kelamin`, `agama`, `status`) VALUES
-('emailbaru@gmail.com', 'nama', 'orang', 22, 'Perempuan', 'Kristen', 'Menikah'),
-('gramdhani66@gmail.com', 'gilang', 'ramdani', 23, 'Laki-Laki', 'Islam', 'Menikah'),
-('ilhamfidatama@gmail.com', 'Muhammad', 'Ilham', 21, 'Laki-Laki', 'Islam', 'Belum Menikah');
+INSERT INTO `akun` (`NRA`, `nama-lengkap`, `jenis-kelamin`, `agama`, `status`) VALUES
+('F1D016057', 'Muhammad Ilham Fidatama', 'Laki-Laki', 'Islam', 'Belum Menikah');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `akun`
+-- Indexes for table `akun`
 --
 ALTER TABLE `akun`
-  ADD PRIMARY KEY (`email`);
-COMMIT;
+  ADD PRIMARY KEY (`NRA`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
