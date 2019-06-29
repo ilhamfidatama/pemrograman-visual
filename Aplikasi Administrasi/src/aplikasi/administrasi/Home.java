@@ -17,25 +17,16 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import Control.Agama;
 import Control.Status;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DateFormat;
 import java.util.HashMap;
+import java.util.function.Supplier;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -52,6 +43,7 @@ public class Home extends javax.swing.JFrame {
     private ResultSet rs;
     private ButtonModel rbPria;
     private ButtonModel rbPerempuan;
+    Koneksi connect;
     
     /**
      * Creates new form Home
@@ -65,6 +57,7 @@ public class Home extends javax.swing.JFrame {
         this.rbPria = inputJK1.getModel();
         this.rbPerempuan = inputJK2.getModel();
         statusBar();
+        connect = new Koneksi();
     }
     
     private void statusBar(){
@@ -509,13 +502,13 @@ public class Home extends javax.swing.JFrame {
     private void inputNRACaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_inputNRACaretUpdate
         if (inputNRA.isEditable()) {
             String nra = inputNRA.getText();
-            String sql = "SELECT * FROM akun WHERE `nra`='%s'";
+            String sql = "SELECT * FROM akun WHERE `NRA`='%s'";
             sql = String.format(sql, nra);
             eksekusiAmbilSQL(sql);
-        
             try {
                 if (rs.next()) {
                     trueEditForm();
+                    inputNamaLengkap.setText(rs.getString("nama-lengkap"));
                 }else{
                     falseEditForm();
                 }
@@ -540,21 +533,17 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_tabelDataMouseClicked
 
     private void printKTAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printKTAActionPerformed
-        HashMap hash = new HashMap();
-        Koneksi connect = new Koneksi();
-        JasperDesign jd;
+        
+        JasperDesign jd = new JasperDesign();
         JasperReport jr;
         JasperPrint jp;
         String nra = nraPrint.getText();
+        this.eksekusiAmbilSQL("SELECT * FROM akun WHERE NRA='"+nra+"'");
+        JRResultSetDataSource jrs = new JRResultSetDataSource(this.rs);
         try {
-            String sql = "SELECT * FROM akun WHERE nra="+nra;
-            jd = JRXmlLoader.load("./src/Report/kta.jrxml");
-            JRDesignQuery newquery = new JRDesignQuery();
-            newquery.setText(sql);
-            jd.setQuery(newquery);
-            jr = JasperCompileManager.compileReport(jd);
-            jp = JasperFillManager.fillReport(jr, null, connect.conn);
-            JasperViewer.viewReport(jp);
+            jr = JasperCompileManager.compileReport(".\\src\\Report\\report1.jrxml");
+            jp = JasperFillManager.fillReport(jr, null, jrs);
+            JasperViewer.viewReport(jp, false);
         } catch (JRException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -595,7 +584,6 @@ public class Home extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
     public static void main(String args[]) {
